@@ -1,0 +1,19 @@
+.AdminMenuItem {
+  padding: 1rem;
+  transition: all 0.2s;
+  cursor: pointer;
+
+  span {
+    transition: all 0.2s;
+    margin-left: 0.2rem;
+  }
+
+  &:hover span {
+    margin-left: 1rem;
+  }
+
+  &:hover {
+    background-color: #2d2d2d;
+    color: #fff;
+  }
+}

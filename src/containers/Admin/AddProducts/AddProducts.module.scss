@@ -1,0 +1,39 @@
+.AddProducts {
+  margin-bottom: 5rem;
+  label {
+    font-size: 1.8rem;
+    display: inline-block;
+    margin-right: 2rem;
+    width: 20rem;
+  }
+
+  select {
+    padding: 0.5rem;
+  }
+}
+
+.Content {
+  margin-top: 2rem;
+}
+
+.Message {
+  span {
+    text-transform: capitalize;
+  }
+  h2 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+  }
+}
+
+.Success {
+  color: #0aec1c;
+}
+
+.Error {
+  color: #ff0000;
+}
+
+.Spinner {
+  margin-top: 15rem;
+}

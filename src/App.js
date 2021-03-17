@@ -1,25 +1,44 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Suspense } from 'react';
+// import classes from './App.module.scss';
+import { Route, Switch, withRouter, Redirect } from 'react-router-dom';
 
-function App() {
+import Layout from './hoc/Layout/Layout';
+import Spinner from './components/UI/Spinner/Spinner';
+import Home from './containers/Home/Home';
+
+const Phones = React.lazy(() => {
+  return import('./containers/Products/Phones/Phones');
+});
+
+const Laptops = React.lazy(() => {
+  return import('./containers/Products/Laptops/Laptops');
+});
+
+const Computers = React.lazy(() => {
+  return import('./containers/Products/Computers/Computers');
+});
+
+const Admin = React.lazy(() => {
+  return import('./components/Admin/Admin');
+});
+
+function App(props) {
+  let routes = (
+    <Switch>
+      <Route path="/admin" render={(props) => <Admin {...props} />} />
+      <Route path="/phones" render={(props) => <Phones {...props} />} />
+      <Route path="/laptops" render={(props) => <Laptops {...props} />} />
+      <Route path="/computers" render={(props) => <Computers {...props} />} />
+      <Route path="/" exact component={Home} />
+      <Redirect to="404" />
+    </Switch>
+  );
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Layout>
+      <Suspense fallback={<Spinner />}>{routes}</Suspense>
+    </Layout>
   );
 }
 
-export default App;
+export default withRouter(App);

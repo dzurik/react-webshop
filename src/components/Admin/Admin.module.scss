@@ -1,0 +1,28 @@
+.Admin {
+  align-self: flex-start;
+  margin: 2rem 5rem;
+  width: 100%;
+
+  display: grid;
+  grid-template-columns: 30rem 1fr;
+}
+
+.Title {
+  grid-column: 1 / -1;
+  justify-self: center;
+  font-size: 3rem;
+  margin-bottom: 5rem;
+  padding: 2rem 10rem;
+  border-bottom: 1px solid #03a7be;
+}
+
+.Menu {
+  border: 1px solid #2d2d2d;
+  padding: 1rem;
+  align-self: flex-start;
+
+  ul {
+    font-size: 1.8rem;
+    list-style: none;
+  }
+}
