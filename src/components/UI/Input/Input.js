@@ -8,6 +8,10 @@ const Input = (props) => {
     inputClasses.push(classes.Error);
   }
 
+  if (props.style === 'column') {
+    inputClasses.push(classes.Column);
+  }
+
   return (
     <div className={classes.Input}>
       <label htmlFor={props.name}>{props.name}</label>

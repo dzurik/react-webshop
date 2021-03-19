@@ -1,4 +1,4 @@
-import axios from '../../axios-products';
+import axios from '../../axios-firebase';
 import * as actionTypes from './actionTypes';
 
 const addProductStart = () => {

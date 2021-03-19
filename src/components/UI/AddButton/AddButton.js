@@ -2,9 +2,15 @@ import React from 'react';
 import classes from './AddButton.module.scss';
 
 const AddButton = (props) => {
+  let addButtonClasses = [classes.AddButton];
+
+  if (props.borderRadius) {
+    addButtonClasses.push(classes.BorderRadius);
+  }
+
   return (
     <button
-      className={classes.AddButton}
+      className={addButtonClasses.join(' ')}
       onClick={props.clicked}
       disabled={!props.disabled}
     >

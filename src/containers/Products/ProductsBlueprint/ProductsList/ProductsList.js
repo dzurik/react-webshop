@@ -1,12 +1,12 @@
 import { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import classes from './Products.module.scss';
-import Product from './Product/Product';
-import Spinner from '../../../components/UI/Spinner/Spinner';
-import * as actions from '../../../store/actions/index';
+import classes from './ProductsList.module.scss';
+import Product from '../Product/Product';
+import Spinner from '../../../../components/UI/Spinner/Spinner';
+import * as actions from '../../../../store/actions/index';
 
-const Products = (props) => {
+const ProductsList = (props) => {
   const listLoading = useSelector((state) => {
     return state.products.listLoading;
   });
@@ -23,14 +23,18 @@ const Products = (props) => {
   );
 
   useEffect(() => {
-    onFetchProducts(props.menu);
-  }, [onFetchProducts, props.menu]);
+    onFetchProducts(props.productType);
+  }, [onFetchProducts, props.productType]);
 
-  let products = (
-    <div className={classes.Spinner}>
-      <Spinner />
-    </div>
-  );
+  let products = null;
+
+  if (listLoading) {
+    products = (
+      <div className={classes.Spinner}>
+        <Spinner />
+      </div>
+    );
+  }
 
   if (list.length > 0) {
     products = (
@@ -39,6 +43,7 @@ const Products = (props) => {
           return (
             <Product
               key={product.id}
+              id={product.id}
               name={product.details.name}
               image={product.details.imageUrl}
               price={+product.details.price}
@@ -65,4 +70,4 @@ const Products = (props) => {
   );
 };
 
-export default Products;
+export default ProductsList;

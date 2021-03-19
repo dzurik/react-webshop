@@ -1,0 +1,26 @@
+.ProductsBlueprint {
+  align-self: flex-start;
+  width: 100%;
+  height: 80vh;
+  padding: 5rem;
+
+  display: flex;
+
+  h3 {
+    font-size: 1.6rem;
+    color: #2d2d2d;
+  }
+}
+
+.ProductsBlueprintFilters {
+  flex: 1 1 20%;
+}
+
+.ProductsBlueprintProducts {
+  flex: 1 0 80%;
+}
+
+.Link {
+  text-decoration: none;
+  color: #2d2d2d;
+}

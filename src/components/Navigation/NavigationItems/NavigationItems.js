@@ -12,7 +12,7 @@ const NavigationItems = (props) => {
         <NavigationItem link="/phones">Phones</NavigationItem>
         <NavigationItem link="/laptops">Laptops</NavigationItem>
         <NavigationItem link="/computers">Computers & Components</NavigationItem>
-        <NavigationItem link="/login">Sign In</NavigationItem>
+        <NavigationItem link="/signin">Sign In</NavigationItem>
       </ul>
       <NavCart />
     </React.Fragment>

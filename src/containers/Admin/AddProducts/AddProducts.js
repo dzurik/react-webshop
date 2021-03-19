@@ -44,18 +44,28 @@ const AddProducts = (props) => {
     }
   }, [selectedProductType]);
 
-  const addNewProductHandler = () => {
+  const resetState = () => {
     setSelectedProductType('default');
     setSelectedForm({});
     setFormValid(false);
+  };
+
+  const addNewProductHandler = () => {
+    resetState();
     onAddNewProduct();
   };
 
   const inputChangedHandler = (event, inputName) => {
+    let [isValid, errorMessage] = checkValidity(
+      event.target.value,
+      selectedForm[inputName].validation
+    );
+
     let updatedInputValue = updateObject(selectedForm[inputName], {
       value: event.target.value,
-      valid: checkValidity(event.target.value, selectedForm[inputName].validation),
+      valid: isValid,
       touched: true,
+      errorMessage: errorMessage,
     });
 
     let updatedForm = updateObject(selectedForm, {
@@ -92,7 +102,7 @@ const AddProducts = (props) => {
   }
 
   let form;
-  console.log(success);
+
   if (selectedProductType) {
     form = (
       <form onSubmit={AddProductHandler} className={classes.Content}>

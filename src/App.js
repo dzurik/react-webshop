@@ -1,34 +1,49 @@
 import React, { Suspense } from 'react';
-// import classes from './App.module.scss';
 import { Route, Switch, withRouter, Redirect } from 'react-router-dom';
 
 import Layout from './hoc/Layout/Layout';
 import Spinner from './components/UI/Spinner/Spinner';
 import Home from './containers/Home/Home';
+import { products } from './shared/routes.js';
 
-const Phones = React.lazy(() => {
-  return import('./containers/Products/Phones/Phones');
-});
-
-const Laptops = React.lazy(() => {
-  return import('./containers/Products/Laptops/Laptops');
-});
-
-const Computers = React.lazy(() => {
-  return import('./containers/Products/Computers/Computers');
+const ProductsBlueprint = React.lazy(() => {
+  return import('./containers/Products/ProductsBlueprint/ProductsBlueprint');
 });
 
 const Admin = React.lazy(() => {
   return import('./components/Admin/Admin');
 });
 
+const SignIn = React.lazy(() => {
+  return import('./containers/Authentication/SignIn/SignIn');
+});
+
+const SignUp = React.lazy(() => {
+  return import('./containers/Authentication/SignUp/SignUp');
+});
+
 function App(props) {
   let routes = (
     <Switch>
       <Route path="/admin" render={(props) => <Admin {...props} />} />
-      <Route path="/phones" render={(props) => <Phones {...props} />} />
-      <Route path="/laptops" render={(props) => <Laptops {...props} />} />
-      <Route path="/computers" render={(props) => <Computers {...props} />} />
+      {products.map((link) => {
+        return (
+          <Route
+            key={link.productType}
+            path={'/' + link.title}
+            render={(props) => (
+              <ProductsBlueprint
+                productType={link.productType}
+                title={link.title}
+                {...props}
+              />
+            )}
+          />
+        );
+      })}
+
+      <Route path="/signin" render={(props) => <SignIn {...props} />} />
+      <Route path="/signup" render={(props) => <SignUp {...props} />} />
       <Route path="/" exact component={Home} />
       <Redirect to="404" />
     </Switch>

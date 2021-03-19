@@ -11,6 +11,7 @@ import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
 
 import productsReducer from './store/reducers/products';
 import adminReducer from './store/reducers/admin';
+import authReducer from './store/reducers/auth';
 
 const composeEnhancers =
   process.env.NODE_ENV === 'development'
@@ -20,6 +21,7 @@ const composeEnhancers =
 const rootReducer = combineReducers({
   products: productsReducer,
   admin: adminReducer,
+  auth: authReducer,
 });
 
 const store = createStore(rootReducer, composeEnhancers(applyMiddleware(thunk)));
