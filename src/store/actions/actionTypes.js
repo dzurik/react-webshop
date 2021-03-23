@@ -10,12 +10,8 @@ export const FETCH_PRODUCTS_START = 'FETCH_PRODUCTS_START';
 export const FETCH_PRODUCTS_SUCCESS = 'FETCH_PRODUCTS_SUCCESS';
 export const FETCH_PRODUCTS_FAIL = 'FETCH_PRODUCTS_FAIL';
 
-export const SIGN_IN_START = 'SIGN_IN_START';
-export const SIGN_IN = 'SIGN_IN';
-export const SIGN_IN_SUCCESS = 'SIGN_IN_SUCCESS';
-export const SIGN_IN_FAIL = 'SIGN_IN_FAIL';
-
-export const SIGN_UP_START = 'SIGN_UP_START';
-export const SIGN_UP = 'SIGN_UP';
-export const SIGN_UP_SUCCESS = 'SIGN_UP_SUCCESS';
-export const SIGN_UP_FAIL = 'SIGN_UP_FAIL';
+export const AUTH_START = 'SIGN_UP_START';
+export const AUTH = 'SIGN_UP';
+export const AUTH_SUCCESS = 'AUTH_SUCCESS';
+export const AUTH_FAIL = 'AUTH_FAIL';
+export const AUTH_LOGOUT = 'AUTH_LOGOUT';

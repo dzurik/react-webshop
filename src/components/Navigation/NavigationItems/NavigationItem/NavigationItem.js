@@ -1,5 +1,6 @@
-import classes from './NavigationItem.module.scss';
 import { NavLink } from 'react-router-dom';
+
+import classes from './NavigationItem.module.scss';
 
 const NavigationItem = (props) => {
   return (

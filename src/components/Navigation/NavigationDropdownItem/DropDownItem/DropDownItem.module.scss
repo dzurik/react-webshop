@@ -1,0 +1,15 @@
+.DropDownItem {
+  padding: 1rem 0;
+
+  a {
+    color: #d1d1d1;
+
+    border-bottom: none;
+
+    &:hover {
+      border-bottom: none;
+      background-color: #03a7be;
+      padding: 0.5rem 1rem;
+    }
+  }
+}

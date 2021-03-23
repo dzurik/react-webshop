@@ -8,7 +8,7 @@ const Input = (props) => {
     inputClasses.push(classes.Error);
   }
 
-  if (props.style === 'column') {
+  if (props.flexStyle === 'column') {
     inputClasses.push(classes.Column);
   }
 

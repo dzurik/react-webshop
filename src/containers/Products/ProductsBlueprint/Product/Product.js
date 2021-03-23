@@ -1,7 +1,8 @@
 import React from 'react';
 import classes from './Product.module.scss';
 import AddButton from '../../../../components/UI/AddButton/AddButton';
-import { FcLike, FcLikePlaceholder } from 'react-icons/fc';
+import { FcLikePlaceholder } from 'react-icons/fc';
+// import { FcLike } from 'react-icons/fc';
 import { IoOpenOutline } from 'react-icons/io5';
 const Product = (props) => {
   let updatePrice = (price) => {

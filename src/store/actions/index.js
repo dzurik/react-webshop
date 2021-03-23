@@ -1,3 +1,3 @@
 export { fetchProducts } from './products';
 export { addProduct, addNewProduct } from './admin';
-export { signIn, signUp } from './auth';
+export { auth, checkAuthStatus, authLogout } from './auth';

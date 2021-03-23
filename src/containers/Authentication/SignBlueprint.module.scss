@@ -32,7 +32,7 @@
 }
 
 .FormBody {
-  padding: 2rem;
+  padding: 2rem 2rem 0 2rem;
   display: flex;
   flex-direction: column;
 
@@ -61,4 +61,18 @@
   margin-top: 2rem;
   font-size: 1.6rem;
   color: red;
+}
+
+.Registrate {
+  padding-bottom: 2rem;
+
+  a {
+    text-decoration: none;
+    cursor: pointer;
+    color: #03a7be;
+  }
+}
+
+.Spinner {
+  margin: 3rem 0;
 }

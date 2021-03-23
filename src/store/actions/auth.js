@@ -2,82 +2,95 @@ import axios from 'axios';
 import axiosFirebase from '../../axios-firebase';
 import * as actionTypes from './actionTypes';
 
-const signInStart = () => {
+const authStart = (signUp) => {
   return {
-    type: actionTypes.SIGN_IN_START,
+    type: actionTypes.AUTH_START,
+    signUp: signUp,
   };
 };
 
-const signInSuccess = () => {
+const authSuccess = (signUp, tokenId, localId) => {
   return {
-    type: actionTypes.SIGN_IN_SUCCESS,
+    type: actionTypes.AUTH_SUCCESS,
+    signUp: signUp,
+    token: tokenId,
+    localId: localId,
   };
 };
 
-const signInFail = () => {
+const authFail = (signUp, error) => {
   return {
-    type: actionTypes.SIGN_IN_FAIL,
-  };
-};
-
-export const signIn = () => {
-  return (dispatch) => {
-    dispatch(signInStart());
-    axios
-      .get(
-        'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyByXTnLPfYZdrsShd0oilUlRHjiNxcRujk'
-      )
-      .then((response) => {
-        console.log(response);
-        dispatch(signInSuccess());
-      })
-      .catch((error) => dispatch(signInFail()));
-  };
-};
-
-const signUpStart = () => {
-  return {
-    type: actionTypes.SIGN_UP_START,
-  };
-};
-
-const signUpSuccess = () => {
-  return {
-    type: actionTypes.SIGN_UP_SUCCESS,
-  };
-};
-
-const signUpFail = (error) => {
-  return {
-    type: actionTypes.SIGN_UP_FAIL,
+    type: actionTypes.AUTH_FAIL,
+    signUp: signUp,
     errorMessage: error.message,
   };
 };
 
-export const signUp = (email, password) => {
+export const authLogout = () => {
+  localStorage.removeItem('expiresDate');
+  localStorage.removeItem('token');
+  localStorage.removeItem('localId');
+  return {
+    type: actionTypes.AUTH_LOGOUT,
+  };
+};
+
+export const auth = (email, password, signUp) => {
   const config = {
     email: email,
     password: password,
     returnSecureToken: true,
   };
+
+  let url;
+
+  if (signUp === true) {
+    url =
+      'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyByXTnLPfYZdrsShd0oilUlRHjiNxcRujk';
+  } else {
+    url =
+      'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyByXTnLPfYZdrsShd0oilUlRHjiNxcRujk';
+  }
+
   return (dispatch) => {
-    dispatch(signUpStart());
+    dispatch(authStart(signUp));
     axios
-      .post(
-        'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyByXTnLPfYZdrsShd0oilUlRHjiNxcRujk',
-        config
-      )
+      .post(url, config)
       .then((response) => {
-        console.log(response);
-        dispatch(signUpSuccess(response.data.idToken, response.data.localId));
-        axiosFirebase.post('users.json', {
-          userName: email.split('@')[0],
-          userId: response.data.localId,
-        });
+        const expireDate = new Date().getTime() / 1000 + +response.data.expiresIn;
+
+        localStorage.setItem('expiresDate', expireDate);
+        localStorage.setItem('token', response.data.idToken);
+        localStorage.setItem('localId', response.data.localId);
+        dispatch(authSuccess(signUp, response.data.idToken, response.data.localId));
+        if (signUp) {
+          axiosFirebase.post('users.json', {
+            userName: email.split('@')[0],
+            userId: response.data.localId,
+          });
+        }
       })
       .catch((error) => {
-        console.log(error.response.data.error);
-        dispatch(signUpFail(error.response.data.error));
+        dispatch(authFail(signUp, error.response.data.error));
       });
+  };
+};
+
+export const checkAuthStatus = () => {
+  const token = localStorage.getItem('token');
+
+  return (dispatch) => {
+    if (!token) {
+      dispatch(authLogout());
+    } else {
+      const now = new Date().getTime() / 1000;
+      const expireDate = localStorage.getItem('expiresDate');
+      if (expireDate > now) {
+        const localId = localStorage.getItem('localId');
+        dispatch(authSuccess(true, token, localId));
+      } else {
+        dispatch(authLogout());
+      }
+    }
   };
 };

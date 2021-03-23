@@ -1,4 +1,24 @@
-.NavigationItem {
+.DropDown {
+  list-style: none;
+  background: #2d2d2d;
+
+  width: 150%;
+  padding: 1rem 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s;
+
+  position: absolute;
+  margin-top: 1rem;
+  left: 0;
+}
+
+.Show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.NavigationDropdownItem {
   position: relative;
 
   a {
@@ -17,6 +37,6 @@
   }
 }
 
-.NavigationItem .active {
+.NavigationDropdownItem .active {
   border-bottom: 2px solid #03a7be;
 }

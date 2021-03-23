@@ -1,20 +1,17 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 
 import classes from './SignBlueprint.module.scss';
 import AddButton from '../../components/UI/AddButton/AddButton';
+import Spinner from '../../components/UI/Spinner/Spinner';
 import Input from '../../components/UI/Input/Input';
 import { checkValidity, updateObject } from '../../shared/utility';
 import { updateErrorMessage } from './errorMessages';
 
 const SignBlueprint = (props) => {
-  const isAuth = useSelector((state) => {
+  const isAuthenticated = useSelector((state) => {
     return state.auth.token !== null;
-  });
-
-  const errorMessage = useSelector((state) => {
-    return state.auth.errorMessage;
   });
 
   /* prettier-ignore */
@@ -82,8 +79,41 @@ const SignBlueprint = (props) => {
     });
   }
 
+  let authRedirect = null;
+  if (isAuthenticated) {
+    authRedirect = <Redirect to="/myaccount" />;
+  }
+
+  let formBody = (
+    <div className={classes.Spinner}>
+      <Spinner />
+    </div>
+  );
+
+  if (!props.loading) {
+    formBody = formElementsArray.map((input) => {
+      return (
+        <Input
+          key={input.id}
+          type={input.config.inputType}
+          name={input.config.name}
+          placeholder={input.config.placeholder}
+          errorMessage={input.config.errorMessage}
+          valid={input.config.valid}
+          touched={input.config.touched}
+          value={input.config.value}
+          changed={(event) =>
+            inputChangedHandler(event, input.id, input.config.errorMessage)
+          }
+          flexStyle="column"
+        />
+      );
+    });
+  }
+
   return (
     <div className={classes.SignUp}>
+      {authRedirect}
       <div>
         <h3>
           <Link to="/" className={classes.Link}>
@@ -96,29 +126,15 @@ const SignBlueprint = (props) => {
       <div className={classes.Form}>
         <h1>{props.title}</h1>
 
-        {errorMessage ? (
-          <p className={classes.Error}>{updateErrorMessage(errorMessage)}</p>
+        {props.errorMessage ? (
+          <p className={classes.Error}>{updateErrorMessage(props.errorMessage)}</p>
         ) : null}
-        <div className={classes.FormBody}>
-          {formElementsArray.map((input) => {
-            return (
-              <Input
-                key={input.id}
-                type={input.config.inputType}
-                name={input.config.name}
-                placeholder={input.config.placeholder}
-                errorMessage={input.config.errorMessage}
-                valid={input.config.valid}
-                touched={input.config.touched}
-                value={input.config.value}
-                changed={(event) =>
-                  inputChangedHandler(event, input.id, input.config.errorMessage)
-                }
-                style={'column'}
-              />
-            );
-          })}
-        </div>
+        <div className={classes.FormBody}>{formBody}</div>
+        {props.title === 'Sign In' ? (
+          <div className={classes.Registrate}>
+            <span>Register here:</span> <Link to="/signup">Click</Link>
+          </div>
+        ) : null}
 
         <AddButton
           disabled={formValid}
