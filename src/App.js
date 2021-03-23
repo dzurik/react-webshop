@@ -25,10 +25,6 @@ const SignUp = React.lazy(() => {
   return import('./containers/Authentication/SignUp/SignUp');
 });
 
-const MyAccountInterface = React.lazy(() => {
-  return import('./components/MyAccount/MyAccountInterface');
-});
-
 const MyAccountInfo = React.lazy(() => {
   return import('./containers/MyAccount/MyAccountInfo/MyAccountInfo');
 });
@@ -79,11 +75,7 @@ function App() {
       <Route path="/signin" render={(props) => <SignIn {...props} />} />
       <Route path="/signup" render={(props) => <SignUp {...props} />} />
 
-      <Route
-        path="/myaccount"
-        exact
-        render={(props) => <MyAccountInterface {...props} />}
-      />
+      <Route path="/myaccount" exact render={(props) => <CustomerInfo {...props} />} />
       <Route
         path="/myaccount/(info)?"
         exact
@@ -95,11 +87,6 @@ function App() {
         render={(props) => <Orders {...props} />}
       />
 
-      <Route
-        path="/myaccount/(welcome)?"
-        exact
-        render={(props) => <CustomerInfo {...props} />}
-      />
       <Route
         path="/myaccount/wishlist"
         exact
