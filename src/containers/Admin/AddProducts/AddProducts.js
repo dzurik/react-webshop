@@ -3,7 +3,17 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import classes from './AddProducts.module.scss';
 import Input from '../../../components/UI/Input/Input';
-import { phone, laptop } from './ProductsBlueprint';
+import {
+  phone,
+  laptop,
+  computer,
+  processor,
+  graphicsCard,
+  motherboard,
+  memory,
+  powerSupply,
+  hardDrive,
+} from './ProductsBlueprint';
 import AddButton from '../../../components/UI/AddButton/AddButton';
 import Spinner from '../../../components/UI/Spinner/Spinner';
 import { checkValidity, updateObject } from '../../../shared/utility';
@@ -40,7 +50,19 @@ const AddProducts = (props) => {
     } else if (selectedProductType === 'laptop') {
       setSelectedForm(laptop);
     } else if (selectedProductType === 'computer') {
-      setSelectedForm({});
+      setSelectedForm(computer);
+    } else if (selectedProductType === 'graphicsCard') {
+      setSelectedForm(graphicsCard);
+    } else if (selectedProductType === 'motherboard') {
+      setSelectedForm(motherboard);
+    } else if (selectedProductType === 'memory') {
+      setSelectedForm(memory);
+    } else if (selectedProductType === 'powerSupply') {
+      setSelectedForm(powerSupply);
+    } else if (selectedProductType === 'hardDrive') {
+      setSelectedForm(hardDrive);
+    } else if (selectedProductType === 'processor') {
+      setSelectedForm(processor);
     }
   }, [selectedProductType]);
 
@@ -112,6 +134,7 @@ const AddProducts = (props) => {
               key={input.id}
               type={input.config.inputType}
               name={input.config.name}
+              options={input.config.options}
               placeholder={input.config.placeholder}
               errorMessage={input.config.errorMessage}
               valid={input.config.valid}
@@ -176,7 +199,13 @@ const AddProducts = (props) => {
             </option>
             <option value="phone">Phone</option>
             <option value="laptop">Laptop</option>
-            <option value="computer">Computer &amp; Component</option>
+            <option value="computer">Computer</option>
+            <option value="processor">Processor</option>
+            <option value="graphicsCard">Graphics Card</option>
+            <option value="motherboard">Motherboard</option>
+            <option value="memory">Memory</option>
+            <option value="hardDrive">Hard Drive</option>
+            <option value="powerSupply">Power Supply Unit</option>
           </select>
 
           {selectedProductType !== 'default' ? form : null}

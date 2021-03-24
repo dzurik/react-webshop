@@ -47,6 +47,8 @@ const ProductsList = (props) => {
               name={product.details.name}
               image={product.details.imageUrl}
               price={+product.details.price}
+              sale={+product.details.sale}
+              quantity={+product.details.quantity}
             />
           );
         })}

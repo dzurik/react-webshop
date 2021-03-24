@@ -20,11 +20,12 @@ const fetchProductsFail = () => {
   };
 };
 
-export const fetchProducts = (phones) => {
+export const fetchProducts = (product) => {
   return (dispatch) => {
     dispatch(fetchProductsStart());
     axios
-      .get(`products/${phones}.json`)
+      .get(`products/${product}.json`)
+
       .then((response) => {
         const fetchedProducts = [];
         for (let key in response.data) {

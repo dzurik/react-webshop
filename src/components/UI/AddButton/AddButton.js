@@ -4,8 +4,8 @@ import classes from './AddButton.module.scss';
 const AddButton = (props) => {
   let addButtonClasses = [classes.AddButton];
 
-  if (props.borderRadius) {
-    addButtonClasses.push(classes.BorderRadius);
+  if (props.comp === 'Product') {
+    addButtonClasses.push(classes.Product);
   }
 
   return (
