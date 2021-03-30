@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 
 import classes from './NavigationItems.module.scss';
 import NavigationItem from './NavigationItem/NavigationItem';
-import NavCart from '../../../containers/NavCart/NavCart';
+import NavCart from '../../../containers/Cart/NavCart/NavCart';
 import NavigationDropdownItem from '../NavigationDropdownItem/NavigationDropdownItem';
 import { products, myaccount } from '../../../shared/routes';
 

@@ -19,14 +19,19 @@ const addProductFail = () => {
 
 export const addProduct = (productDetails, productType) => {
   const details = {
-    id: new Date(),
+    id: new Date()
+      .toISOString()
+      .replaceAll('.', '')
+      .replaceAll('-', '')
+      .replaceAll(':', ''),
+    type: productType,
     details: productDetails,
   };
 
   return (dispatch) => {
     dispatch(addProductStart());
     axios
-      .post(`products/${productType}.json`, details)
+      .put(`products/${productType}/${details.id}.json`, details)
       .then((response) => dispatch(addProductSuccess()))
       .catch((err) => dispatch(addProductFail()));
   };

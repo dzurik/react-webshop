@@ -44,6 +44,7 @@ const ProductsList = (props) => {
             <Product
               key={product.id}
               id={product.id}
+              type={product.type}
               name={product.details.name}
               image={product.details.imageUrl}
               price={+product.details.price}

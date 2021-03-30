@@ -30,6 +30,7 @@ export const authLogout = () => {
   localStorage.removeItem('expiresDate');
   localStorage.removeItem('token');
   localStorage.removeItem('localId');
+  localStorage.removeItem('cart');
   return {
     type: actionTypes.AUTH_LOGOUT,
   };
@@ -64,7 +65,7 @@ export const auth = (email, password, signUp) => {
         localStorage.setItem('localId', response.data.localId);
         dispatch(authSuccess(signUp, response.data.idToken, response.data.localId));
         if (signUp) {
-          axiosFirebase.post('users.json', {
+          axiosFirebase.put(`users/${response.data.localId}.json`, {
             userName: email.split('@')[0],
             userId: response.data.localId,
           });

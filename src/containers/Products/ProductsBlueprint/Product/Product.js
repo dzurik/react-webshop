@@ -1,16 +1,26 @@
 import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import classes from './Product.module.scss';
 import AddButton from '../../../../components/UI/AddButton/AddButton';
 import { FcLikePlaceholder } from 'react-icons/fc';
 // import { FcLike } from 'react-icons/fc';
 import { IoOpenOutline } from 'react-icons/io5';
+import * as actions from '../../../../store/actions';
 
 const Product = (props) => {
+  const userId = useSelector((state) => {
+    return state.auth.userId;
+  });
+
+  const dispatch = useDispatch();
+
+  const onAddToCart = (userId, productId, productType) =>
+    dispatch(actions.addToCart(userId, productId, productType));
+
   let updatePrice = (price, sale) => {
     let number = price;
     let updatedSale = sale / 100;
 
-    // 1000  10 = 1000 - 100 = 900
     if (sale) {
       number = number - number * updatedSale;
     }
@@ -58,7 +68,11 @@ const Product = (props) => {
             <h2 className={classes.Price}>{updatePrice(props.price, props.sale)}</h2>
           )}
 
-          <AddButton comp={'Product'} disabled={true}>
+          <AddButton
+            comp={'Product'}
+            disabled
+            clicked={() => onAddToCart(userId, props.id, props.type)}
+          >
             Into Cart
           </AddButton>
         </div>

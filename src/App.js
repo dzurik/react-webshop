@@ -1,6 +1,6 @@
-import React, { useEffect, Suspense, useCallback } from 'react';
+import React, { useEffect, Suspense, useCallback, useRef } from 'react';
 import { Route, Switch, withRouter, Redirect } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 import Layout from './hoc/Layout/Layout';
 import Spinner from './components/UI/Spinner/Spinner';
@@ -41,16 +41,64 @@ const WishList = React.lazy(() => {
   return import('./containers/MyAccount/WishList/WishList');
 });
 
+const Cart = React.lazy(() => {
+  return import('./containers/Cart/Cart');
+});
+
 function App() {
+  const token = useSelector((state) => {
+    return state.auth.token;
+  });
+
   const dispatch = useDispatch();
 
   const onCheckAuthStatus = useCallback(() => dispatch(actions.checkAuthStatus()), [
     dispatch,
   ]);
+  const onFetchCart = useCallback((token) => dispatch(actions.fetchCart(token)), [
+    dispatch,
+  ]);
+
+  const cart = useSelector((state) => {
+    return state.cart.cart;
+  });
+
+  const shallowCart = useSelector((state) => {
+    return state.cart.shallowCart;
+  });
+
+  const onLoadShallowCart = useCallback(
+    (cart, shallowCart) => dispatch(actions.loadShallowCart(cart, shallowCart)),
+    [dispatch]
+  );
+
+  const onLoadCart = useCallback(
+    (cart, shallowCart) => dispatch(actions.loadCart(cart, shallowCart)),
+    [dispatch]
+  );
 
   useEffect(() => {
     onCheckAuthStatus();
-  }, [onCheckAuthStatus]);
+
+    onFetchCart(token);
+  }, [onCheckAuthStatus, onFetchCart, token]);
+
+  const shallowRef = useRef(shallowCart);
+
+  useEffect(() => {
+    if (
+      cart.length > 0 &&
+      cart.length > shallowRef.current.length &&
+      shallowCart.length === shallowRef.current.length
+    ) {
+      onLoadShallowCart(cart);
+    }
+    shallowRef.current = shallowCart;
+
+    if (cart.length > 0 && cart.length === shallowCart.length) {
+      onLoadCart(shallowCart);
+    }
+  }, [onLoadShallowCart, onLoadCart, cart, shallowCart]);
 
   let routes = (
     <Switch>
@@ -72,6 +120,7 @@ function App() {
       })}
 
       <Route path="/admin" render={(props) => <Admin {...props} />} />
+      <Route path="/cart" render={(props) => <Cart {...props} />} />
       <Route path="/signin" render={(props) => <SignIn {...props} />} />
       <Route path="/signup" render={(props) => <SignUp {...props} />} />
 
