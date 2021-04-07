@@ -1,0 +1,70 @@
+.SingleProduct {
+  height: 100%;
+  padding: 5rem;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  h2 {
+    font-size: 3rem;
+    margin-bottom: 4rem;
+  }
+
+  p {
+    font-size: 1.8rem;
+    margin: 1rem 0;
+  }
+}
+
+.Price {
+  color: #03a7be;
+  font-size: 2.1rem;
+  font-weight: 700;
+}
+
+.Button {
+  width: 10rem;
+}
+
+.Image {
+  flex: 1 1 40%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+  }
+}
+
+.Body {
+  flex: 1 1 60%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.Sale {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  width: 6rem;
+  height: 6rem;
+  background-color: #dd5050;
+  color: #fff;
+  font-size: 1.6rem;
+  font-weight: 700;
+  border-radius: 50%;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  filter: drop-shadow(0 0 0.5rem rgba(0, 0, 0, 0.8));
+}

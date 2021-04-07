@@ -1,4 +1,12 @@
-export { fetchProducts } from './products';
+export { fetchProducts, fetchSingleProduct } from './products';
 export { addProduct, addNewProduct } from './admin';
 export { auth, checkAuthStatus, authLogout } from './auth';
-export { addToCart, loadShallowCart, fetchCart, loadCart, clearCart } from './cart';
+export {
+  addToCart,
+  removeFromCart,
+  removeFullItemFromCart,
+  fetchCart,
+  loadShallowCart,
+  loadCart,
+  clearCart,
+} from './cart';

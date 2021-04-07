@@ -38,3 +38,18 @@ export const checkValidity = (value, rules) => {
 
   return [isValid, errorMessage];
 };
+
+export const updatePrice = (price, sale) => {
+  let number = price;
+  let updatedSale = sale / 100;
+
+  if (sale) {
+    number = number - number * updatedSale;
+  }
+
+  number = new Intl.NumberFormat('de-DE', {
+    style: 'currency',
+    currency: 'EUR',
+  }).format(number);
+  return number;
+};

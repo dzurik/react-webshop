@@ -59,6 +59,7 @@ export const phone = {
   ),
   cpu: formHelper('text', 'CPU Model', 'Snapdragon™ 730G', '', '', true, 6),
   cores: formHelper('number', 'CPU Cores', '5', '', '', true, null, true),
+  cpuSpeed: formHelper('text', 'CPU Speed (GHz)', '2.73', '', '', true),
   display: formHelper('text', 'Display Size (inch)', '5.8', '', '', true, null, true),
   ram: formHelper('number', 'Memory Size (GB)', '4', '', '', true, null, true),
   storage: formHelper('number', 'Storage Capacity (GB)', '128', '', '', true, null, true),

@@ -37,3 +37,33 @@ export const fetchProducts = (product) => {
       .catch((error) => dispatch(fetchProductsFail()));
   };
 };
+
+const fetchSingleProductStart = () => {
+  return {
+    type: actionTypes.FETCH_SINGLE_PRODUCT_START,
+  };
+};
+
+const fetchSingleProductSuccess = (product) => {
+  return {
+    type: actionTypes.FETCH_SINGLE_PRODUCT_SUCCESS,
+    product: product,
+  };
+};
+
+const fetchSingleProductFail = () => {
+  return {
+    type: actionTypes.FETCH_SINGLE_PRODUCT_FAIL,
+  };
+};
+
+export const fetchSingleProduct = (id, type) => {
+  return (dispatch) => {
+    dispatch(fetchSingleProductStart());
+
+    axios
+      .get(`products/${type}/${id}.json`)
+      .then((response) => dispatch(fetchSingleProductSuccess(response.data)))
+      .catch((error) => dispatch(fetchSingleProductFail()));
+  };
+};

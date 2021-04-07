@@ -2,37 +2,191 @@ import * as actionTypes from './actionTypes';
 import axios from '../../axios-firebase';
 // import { updateObject } from '../../shared/utility';
 
-const addToCartStart = (productId, productType) => {
+// ADD TO CART
+
+const addToCartStart = () => {
   return {
     type: actionTypes.ADD_TO_CART_START,
-    productId: productId,
-    productType: productType,
   };
 };
 
-// const addToCartSuccess = () => {};
+const addToCartSuccess = (product) => {
+  return {
+    type: actionTypes.ADD_TO_CART_SUCCESS,
+    product: product,
+  };
+};
 
-// const addToCartFail = () => {};
+const addToCartFail = () => {
+  return {
+    type: actionTypes.ADD_TO_CART_FAIL,
+  };
+};
 
 export const addToCart = (userId, productId, productType) => {
+  const transactionId = new Date()
+    .toISOString()
+    .replaceAll('.', '')
+    .replaceAll('-', '')
+    .replaceAll(':', '');
+
   let product = {
-    productId: productId,
-    productType: productType,
+    transactionId: transactionId,
+    type: productType,
+    id: productId,
+    quantity: 1,
   };
 
   return (dispatch, getState) => {
-    dispatch(addToCartStart(productId, productType));
-    const cart = getState().cart.cart;
+    dispatch(addToCartStart());
 
-    localStorage.setItem('cart', JSON.stringify(cart));
     if (userId) {
       axios
-        .post(`/users/${userId}/cart/.json`, product)
-        .then((response) => {})
-        .catch((error) => console.log(error));
+        .put(`/users/${userId}/cart/${transactionId}.json`, product)
+        .then((response) => dispatch(addToCartSuccess(product)))
+        .catch((error) => dispatch(addToCartFail()));
+    } else {
+      dispatch(addToCartSuccess(product));
+    }
+    const cart = getState().cart.cart;
+    localStorage.setItem('cart', JSON.stringify(cart));
+  };
+};
+
+// REMOVE FROM CART
+
+const removeFromCartStart = () => {
+  return {
+    type: actionTypes.REMOVE_FROM_CART_START,
+  };
+};
+
+const removeFromCartSuccess = (transactionId, productId) => {
+  return {
+    type: actionTypes.REMOVE_FROM_CART_SUCCESS,
+    productId: productId,
+    transactionId: transactionId,
+  };
+};
+
+const removeFromCartFail = () => {
+  return {
+    type: actionTypes.REMOVE_FROM_CART_FAIL,
+  };
+};
+
+export const removeFromCart = (userId, productId, cart) => {
+  return (dispatch, getState) => {
+    let filteredItems = cart.filter((item) => item.id === productId);
+
+    dispatch(removeFromCartStart());
+
+    if (userId) {
+      axios
+        .delete(`/users/${userId}/cart/${filteredItems[0].transactionId}.json`)
+        .then((response) =>
+          dispatch(removeFromCartSuccess(filteredItems[0].transactionId, productId))
+        )
+        .catch((error) => dispatch(removeFromCartFail()));
+    } else {
+      dispatch(removeFromCartSuccess(filteredItems[0].transactionId, productId));
+    }
+    const updatedCart = getState().cart.cart;
+
+    if (updatedCart.length === 0) {
+      localStorage.removeItem('cart');
+    } else {
+      localStorage.setItem('cart', JSON.stringify(updatedCart));
     }
   };
 };
+
+// REMOVE FULL ITEM FROM CART
+
+export const removeFullItemFromCartStart = () => {
+  return {
+    type: actionTypes.REMOVE_FULL_ITEM_FROM_CART_START,
+  };
+};
+
+export const removeFullItemFromCartSuccess = (updatedCart, productId) => {
+  return {
+    type: actionTypes.REMOVE_FULL_ITEM_FROM_CART_SUCCESS,
+    updatedCart: updatedCart,
+    productId: productId,
+  };
+};
+
+export const removeFullItemFromCartFail = () => {
+  return {
+    type: actionTypes.REMOVE_FULL_ITEM_FROM_CART_FAIL,
+  };
+};
+
+export const removeFullItemFromCart = (userId, productId, cart) => {
+  return (dispatch, getState) => {
+    let updatedCart = cart.filter((item) => item.id !== productId);
+    let deletableItems = cart.filter((item) => item.id === productId);
+    dispatch(removeFullItemFromCartStart());
+
+    if (userId) {
+      deletableItems.forEach((item) => {
+        axios
+          .delete(`/users/${userId}/cart/${item.transactionId}.json`)
+          .then((response) =>
+            dispatch(removeFullItemFromCartSuccess(updatedCart, productId))
+          )
+          .catch((error) => dispatch(removeFullItemFromCartFail()));
+      });
+    } else {
+      dispatch(removeFullItemFromCartSuccess(updatedCart, productId));
+    }
+
+    const removedCart = getState().cart.cart;
+
+    if (updatedCart.length === 0) {
+      localStorage.removeItem('cart');
+    } else {
+      localStorage.setItem('cart', JSON.stringify(removedCart));
+    }
+  };
+};
+
+// CLEAR CART
+
+const clearCartStart = () => {
+  return {
+    type: actionTypes.CLEAR_CART_START,
+  };
+};
+
+const clearCartSuccess = () => {
+  return {
+    type: actionTypes.CLEAR_CART_SUCCESS,
+  };
+};
+
+const clearCartFail = () => {
+  return {
+    type: actionTypes.CLEAR_CART_FAIL,
+  };
+};
+
+export const clearCart = (token, userId) => {
+  return (dispatch) => {
+    dispatch(clearCartStart());
+    if (token) {
+      axios
+        .delete(`/users/${userId}/cart.json?auth=${token}`)
+        .then((response) => dispatch(clearCartSuccess()))
+        .catch((error) => dispatch(clearCartFail));
+    } else {
+      dispatch(clearCartSuccess());
+    }
+  };
+};
+
+// LOAD SHALLOW CART
 
 const loadShallowCartStart = () => {
   return {
@@ -40,30 +194,48 @@ const loadShallowCartStart = () => {
   };
 };
 
-const loadShallowCartSuccess = (item) => {
+const loadShallowCartSuccess = (item, transactionId) => {
   return {
-    type: actionTypes.LOAD_SHALLOW_CART,
+    type: actionTypes.LOAD_SHALLOW_CART_SUCCESS,
     item: item,
+    transactionId: transactionId,
   };
 };
+
+const loadShallowCartFail = () => {
+  return {
+    type: actionTypes.LOAD_SHALLOW_CART_FAIL,
+  };
+};
+
+export const loadShallowCart = (cart) => {
+  return (dispatch) => {
+    dispatch(loadShallowCartStart());
+
+    const localStorageCart = JSON.parse(localStorage.getItem('cart'));
+    if (!localStorageCart) dispatch(clearCart());
+
+    if (localStorageCart || cart.length === localStorageCart.length) {
+      cart.forEach((item) => {
+        axios
+          .get(`products/${item.type}/${item.id}.json`)
+          .then((response) => {
+            dispatch(loadShallowCartSuccess(response.data, item.transactionId));
+          })
+          .catch((error) => dispatch(loadShallowCartFail()));
+      });
+    } else {
+      dispatch(loadShallowCartSuccess());
+    }
+  };
+};
+
+// LOAD CART
 
 const loadCartSuccess = (cart) => {
   return {
     type: actionTypes.LOAD_CART_SUCCESS,
     cart: cart,
-  };
-};
-
-const loadCartFail = () => {
-  return {
-    type: actionTypes.LOAD_CART_FAIL,
-  };
-};
-
-const loadCartItem = (item) => {
-  return {
-    type: actionTypes.LOAD_CART_ITEM,
-    item: item,
   };
 };
 
@@ -73,17 +245,7 @@ export const loadCart = (shallowCart) => {
   };
 };
 
-export const loadShallowCart = (cart) => {
-  return (dispatch) => {
-    dispatch(loadShallowCartStart());
-
-    cart.forEach((item) => {
-      axios.get(`products/${item.type}/${item.id}.json`).then((response) => {
-        dispatch(loadShallowCartSuccess(response.data));
-      });
-    });
-  };
-};
+// FETCH CART
 
 const fetchCartStart = (cart) => {
   return {
@@ -124,11 +286,13 @@ export const fetchCart = (token) => {
               const updatedProduct = {
                 type: response.data[product].productType,
                 id: response.data[product].productId,
+                transactionId: response.data[product].transactionId,
                 quantity: 1,
               };
               updatedCart.push(updatedProduct);
             });
             dispatch(fetchCartSuccess(updatedCart));
+            localStorage.setItem('cart', JSON.stringify(updatedCart));
           }
         })
         .catch((err) => {
@@ -143,30 +307,16 @@ export const fetchCart = (token) => {
         let updatedProduct = {
           productId: product.id,
           productType: product.type,
+          transactionId: product.transactionId,
         };
 
         return updatedProduct;
       });
-      updatedCart.forEach((product) => {
-        axios.post(`/users/${userId}/cart/.json`, product);
-      });
-    } else if (!token) {
-      dispatch(clearCart(null, null));
-    }
-  };
-};
-
-const clearCartStart = () => {
-  return {
-    type: actionTypes.CLEAR_CART_START,
-  };
-};
-
-export const clearCart = (token, userId) => {
-  return (dispatch) => {
-    dispatch(clearCartStart());
-    if (token) {
-      axios.delete(`/users/${userId}/cart.json?auth=${token}`);
+      setTimeout(() => {
+        updatedCart.forEach((product) => {
+          axios.put(`/users/${userId}/cart/${product.transactionId}.json`, product);
+        });
+      }, 100);
     }
   };
 };

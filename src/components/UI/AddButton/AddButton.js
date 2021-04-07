@@ -8,6 +8,10 @@ const AddButton = (props) => {
     addButtonClasses.push(classes.Product);
   }
 
+  if (props.comp === 'Modal') {
+    addButtonClasses.push(classes.Modal);
+  }
+
   return (
     <button
       className={addButtonClasses.join(' ')}

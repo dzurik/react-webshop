@@ -19,6 +19,7 @@ const SignIn = (props) => {
 
   return (
     <SignBlueprint
+      history={props.history}
       errorMessage={errorMessage}
       loading={loading}
       title="Sign In"

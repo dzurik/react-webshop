@@ -1,0 +1,91 @@
+.Modal {
+  position: fixed;
+  background-color: #fff;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  z-index: 1000;
+
+  display: block;
+  width: 70%;
+  height: 60%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ModalOpen {
+  animation: modalOpen 0.5s ease-out forwards;
+}
+
+.ModalClosed {
+  animation: modalClosed 0.5s ease-out forwards;
+}
+
+@keyframes modalOpen {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5);
+  }
+
+  70% {
+    transform: translate(-50%, -50%) scale(1.05);
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes modalClosed {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0);
+  }
+}
+
+.Backdrop {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 500;
+  background-color: rgba(#000, 0.75);
+}
+
+.BackdropOpen {
+  animation: backdropOpen 0.5s ease-out forwards;
+}
+
+.Backdroplosed {
+  animation: backdropClosed 0.5s ease-out forwards;
+}
+
+@keyframes backdropOpen {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes backdroplosed {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}

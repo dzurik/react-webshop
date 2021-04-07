@@ -46,10 +46,6 @@ const Cart = React.lazy(() => {
 });
 
 function App() {
-  const token = useSelector((state) => {
-    return state.auth.token;
-  });
-
   const dispatch = useDispatch();
 
   const onCheckAuthStatus = useCallback(() => dispatch(actions.checkAuthStatus()), [
@@ -67,6 +63,10 @@ function App() {
     return state.cart.shallowCart;
   });
 
+  const token = useSelector((state) => {
+    return state.auth.token;
+  });
+
   const onLoadShallowCart = useCallback(
     (cart, shallowCart) => dispatch(actions.loadShallowCart(cart, shallowCart)),
     [dispatch]
@@ -77,10 +77,14 @@ function App() {
     [dispatch]
   );
 
+  const tokenRef = useRef(token);
+
   useEffect(() => {
     onCheckAuthStatus();
-
-    onFetchCart(token);
+    if (tokenRef.current === null || token !== tokenRef.current) {
+      onFetchCart(token);
+    }
+    tokenRef.current = token;
   }, [onCheckAuthStatus, onFetchCart, token]);
 
   const shallowRef = useRef(shallowCart);
