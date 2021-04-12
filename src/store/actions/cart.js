@@ -1,6 +1,14 @@
 import * as actionTypes from './actionTypes';
 import axios from '../../axios-firebase';
-// import { updateObject } from '../../shared/utility';
+
+
+// CLEAR ADDEDPRODUCT
+
+export const clearAddedProduct = () => {
+  return {
+    type: actionTypes.CLEAR_ADDED_PRODUCT,
+  };
+};
 
 // ADD TO CART
 
@@ -320,3 +328,4 @@ export const fetchCart = (token) => {
     }
   };
 };
+

@@ -63,6 +63,9 @@ export const auth = (email, password, signUp) => {
         localStorage.setItem('expiresDate', expireDate);
         localStorage.setItem('token', response.data.idToken);
         localStorage.setItem('localId', response.data.localId);
+
+        // axios.get(`users/${item.localId}.json`).then();
+
         dispatch(authSuccess(signUp, response.data.idToken, response.data.localId));
         if (signUp) {
           axiosFirebase.put(`users/${response.data.localId}.json`, {

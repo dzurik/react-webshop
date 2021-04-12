@@ -1,14 +1,16 @@
 .SingleProduct {
+  position: relative;
   height: 100%;
-  padding: 5rem;
+  padding: 3rem;
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
+  grid-gap: 2rem;
 
   h2 {
     font-size: 3rem;
-    margin-bottom: 4rem;
+    margin-bottom: 3rem;
   }
 
   p {
@@ -33,6 +35,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  border: 1px solid #cecece;
+  padding: 2rem;
 
   img {
     height: 100%;
@@ -67,4 +71,29 @@
   align-items: center;
 
   filter: drop-shadow(0 0 0.5rem rgba(0, 0, 0, 0.8));
+}
+
+.Like {
+  display: flex;
+  align-items: center;
+}
+
+.Icon,
+.Liked {
+  font-size: 2rem;
+  margin-right: 1rem;
+  cursor: pointer;
+}
+
+.Liked {
+  color: #ff2d2d;
+}
+
+.CloseButton {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+
+  font-size: 2rem;
+  cursor: pointer;
 }

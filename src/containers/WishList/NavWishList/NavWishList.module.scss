@@ -1,0 +1,40 @@
+.NavWishList {
+  height: 3.8rem;
+  width: 3.8rem;
+  background-color: #d1d1d1;
+  border-radius: 50%;
+  position: relative;
+  margin-left: 2rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.Wish {
+  color: #2d2d2d;
+  font-size: 2.5rem;
+}
+
+.Liked {
+  font-size: 2.5rem;
+  color: #ff2d2d;
+}
+
+.Counter {
+  position: absolute;
+  background-color: #03a7be;
+  border-radius: 50%;
+  height: 1.5rem;
+  width: 1.5rem;
+  right: 0.5rem;
+  top: 0.5rem;
+  color: #fff;
+  font-weight: 700;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}

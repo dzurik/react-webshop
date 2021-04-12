@@ -4,7 +4,8 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import Layout from './hoc/Layout/Layout';
 import Spinner from './components/UI/Spinner/Spinner';
-import Home from './containers/Home/Home';
+import Home from './components/Home/Home';
+import FourOFourError from './components/FourOFourError/FourOFourError';
 import Logout from './containers/Authentication/Logout/Logout';
 import { products } from './shared/routes';
 import * as actions from './store/actions';
@@ -33,12 +34,12 @@ const Orders = React.lazy(() => {
   return import('./containers/MyAccount/Orders/Orders');
 });
 
-const CustomerInfo = React.lazy(() => {
-  return import('./containers/MyAccount/CustomerInfo/CustomerInfo');
+const MyAccount = React.lazy(() => {
+  return import('./containers/MyAccount/MyAccount');
 });
 
 const WishList = React.lazy(() => {
-  return import('./containers/MyAccount/WishList/WishList');
+  return import('./containers/WishList/WishList');
 });
 
 const Cart = React.lazy(() => {
@@ -46,15 +47,6 @@ const Cart = React.lazy(() => {
 });
 
 function App() {
-  const dispatch = useDispatch();
-
-  const onCheckAuthStatus = useCallback(() => dispatch(actions.checkAuthStatus()), [
-    dispatch,
-  ]);
-  const onFetchCart = useCallback((token) => dispatch(actions.fetchCart(token)), [
-    dispatch,
-  ]);
-
   const cart = useSelector((state) => {
     return state.cart.cart;
   });
@@ -67,6 +59,26 @@ function App() {
     return state.auth.token;
   });
 
+  const userId = useSelector((state) => {
+    return state.auth.userId;
+  });
+
+  const tokenRef = useRef(token);
+
+  const dispatch = useDispatch();
+
+  const onCheckAuthStatus = useCallback(() => dispatch(actions.checkAuthStatus()), [
+    dispatch,
+  ]);
+  const onFetchCart = useCallback((token) => dispatch(actions.fetchCart(token)), [
+    dispatch,
+  ]);
+
+  const onFetchWishlist = useCallback(
+    (userId) => dispatch(actions.fetchWishlist(userId)),
+    [dispatch]
+  );
+
   const onLoadShallowCart = useCallback(
     (cart, shallowCart) => dispatch(actions.loadShallowCart(cart, shallowCart)),
     [dispatch]
@@ -77,8 +89,6 @@ function App() {
     [dispatch]
   );
 
-  const tokenRef = useRef(token);
-
   useEffect(() => {
     onCheckAuthStatus();
     if (tokenRef.current === null || token !== tokenRef.current) {
@@ -86,6 +96,12 @@ function App() {
     }
     tokenRef.current = token;
   }, [onCheckAuthStatus, onFetchCart, token]);
+
+  useEffect(() => {
+    if (token) {
+      onFetchWishlist(userId);
+    }
+  }, [onFetchWishlist, token, userId]);
 
   const shallowRef = useRef(shallowCart);
 
@@ -128,7 +144,7 @@ function App() {
       <Route path="/signin" render={(props) => <SignIn {...props} />} />
       <Route path="/signup" render={(props) => <SignUp {...props} />} />
 
-      <Route path="/myaccount" exact render={(props) => <CustomerInfo {...props} />} />
+      <Route path="/myaccount" exact render={(props) => <MyAccount {...props} />} />
       <Route
         path="/myaccount/(info)?"
         exact
@@ -140,60 +156,13 @@ function App() {
         render={(props) => <Orders {...props} />}
       />
 
-      <Route
-        path="/myaccount/wishlist"
-        exact
-        render={(props) => <WishList {...props} />}
-      />
+      <Route path="/wishlist" exact render={(props) => <WishList {...props} />} />
+      <Route path="/404" exact component={FourOFourError} />
       <Route path="/logout" exact component={Logout} />
       <Route path="/" exact component={Home} />
-      <Redirect to="404" />
+      <Redirect to="/404" />
     </Switch>
   );
-
-  // if (isAuthenticated) {
-  //   routes = (
-  //     <Switch>
-  //       <Route path="/admin" render={(props) => <Admin {...props} />} />
-  //       {products.map((link) => {
-  //         return (
-  //           <Route
-  //             key={link.productType}
-  //             exact
-  //             path={link.component ? `/computers/(${link.link})?` : '/' + link.link}
-  //             render={(props) => (
-  //               <ProductsBlueprint
-  //                 productType={link.productType}
-  //                 title={link.title}
-  //                 {...props}
-  //               />
-  //             )}
-  //           />
-  //         );
-  //       })}
-
-  //       <Route path="/signin" render={(props) => <SignIn {...props} />} />
-  //       <Route path="/signup" render={(props) => <SignUp {...props} />} />
-
-  //       <Route path="/myaccount" render={(props) => <MyAccountInterface {...props} />} />
-  //       <Route path="/myaccount/orders?" render={(props) => <Orders {...props} />} />
-  //       <Route
-  //         path="/myaccount/(info)?"
-  //         render={(props) => <MyAccountInfo {...props} />}
-  //       />
-  //       <Route
-  //         path="/myaccount/(customerinfo)?"
-  //         render={(props) => <CustomerInfo {...props} />}
-  //       />
-  //       <Route
-  //         path="/myaccount/(wishlist)?"
-  //         render={(props) => <WishList {...props} />}
-  //       />
-  //       <Route path="/" exact component={Home} />
-  //       <Redirect to="404" />
-  //     </Switch>
-  //   );
-  // }
 
   return (
     <Layout>

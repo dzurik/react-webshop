@@ -4,6 +4,7 @@ import { updateObject } from '../../shared/utility';
 const initialState = {
   token: null,
   userId: null,
+  userName: null,
   signInLoading: false,
   signInErrorMessage: null,
   signUpLoading: false,

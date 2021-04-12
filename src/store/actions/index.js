@@ -9,4 +9,6 @@ export {
   loadShallowCart,
   loadCart,
   clearCart,
+  clearAddedProduct,
 } from './cart';
+export { addWishlist, removeWishlist, fetchWishlist } from './wishlist';

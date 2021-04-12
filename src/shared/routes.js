@@ -67,11 +67,7 @@ export const products = [
     filters: {},
   },
 ];
-// {
-//   title: 'Customer Info',
-//   link: 'welcome',
-//   linkRoute: 'myaccount',
-// },
+
 export const myaccount = [
   {
     title: 'My Account Info',
@@ -81,11 +77,6 @@ export const myaccount = [
   {
     title: 'My Orders',
     link: 'orders',
-    linkRoute: 'myaccount',
-  },
-  {
-    title: 'My Wishlist',
-    link: 'wishlist',
     linkRoute: 'myaccount',
   },
   {

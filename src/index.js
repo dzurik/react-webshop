@@ -13,6 +13,7 @@ import productsReducer from './store/reducers/products';
 import adminReducer from './store/reducers/admin';
 import authReducer from './store/reducers/auth';
 import cartReducer from './store/reducers/cart';
+import wishlistReducer from './store/reducers/wishlist';
 
 const composeEnhancers =
   (process.env.NODE_ENV === 'development'
@@ -24,6 +25,7 @@ const rootReducer = combineReducers({
   admin: adminReducer,
   auth: authReducer,
   cart: cartReducer,
+  wishlist: wishlistReducer,
 });
 
 const store = createStore(rootReducer, composeEnhancers(applyMiddleware(thunk)));

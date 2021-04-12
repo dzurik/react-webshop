@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import classes from './NavigationItems.module.scss';
 import NavigationItem from './NavigationItem/NavigationItem';
 import NavCart from '../../../containers/Cart/NavCart/NavCart';
+import NavWishList from '../../../containers/WishList/NavWishList/NavWishList';
 import NavigationDropdownItem from '../NavigationDropdownItem/NavigationDropdownItem';
 import { products, myaccount } from '../../../shared/routes';
 
@@ -33,6 +34,9 @@ const NavigationItems = (props) => {
           <NavigationItem link="/signin">Sign In</NavigationItem>
         )}
       </ul>
+
+      {isAuthenticated ? <NavWishList /> : null}
+
       <NavCart />
     </React.Fragment>
   );

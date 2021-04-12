@@ -7,6 +7,15 @@ const initialState = {
   fullDetailedCart: null,
   loading: false,
   error: false,
+  addedProduct: null,
+};
+
+// CLEAR ADDEDPRODUCT
+
+const clearAddedProduct = (state, action) => {
+  return updateObject(state, {
+    addedProduct: null,
+  });
 };
 
 // ADD TO CART
@@ -17,6 +26,7 @@ const addToCartStart = (state, action) => {
 
 const addToCartSuccess = (state, action) => {
   return updateObject(state, {
+    addedProduct: action.product,
     cart: state.cart.concat(action.product),
   });
 };
@@ -59,7 +69,7 @@ const removeFullItemFromCartStart = (state, action) => {
 
 const removeFullItemFromCartSuccess = (state, action) => {
   let updatedFullCart = [];
-  console.log(action);
+
   state.fullDetailedCart.forEach((item) => {
     if (item.id !== action.productId) {
       updatedFullCart.push(item);
@@ -239,6 +249,10 @@ const reducer = (state = initialState, action) => {
 
   if (action.type === actionTypes.CLEAR_CART_FAIL) {
     return clearCartFail(state, action);
+  }
+
+  if (action.type === actionTypes.CLEAR_ADDED_PRODUCT) {
+    return clearAddedProduct(state, action);
   }
 
   return state;

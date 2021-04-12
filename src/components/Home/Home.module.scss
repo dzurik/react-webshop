@@ -1,0 +1,35 @@
+.Home {
+  padding: 5rem;
+  width: 70%;
+  height: auto;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  border-radius: 3px;
+  border: 1px solid #ccc;
+
+  h1 {
+    font-size: 3rem;
+    margin-bottom: 2rem;
+    color: #03a7be;
+  }
+
+  p {
+    margin: 2rem 0;
+    font-size: 2rem;
+    line-height: 1.6;
+    text-align: justify;
+  }
+
+  span {
+    display: block;
+    margin-top: 2rem;
+
+    a {
+      color: #03a7be;
+      text-decoration: none;
+    }
+  }
+}

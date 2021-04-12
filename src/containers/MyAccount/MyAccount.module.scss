@@ -1,4 +1,4 @@
-.CustomerInfo {
+.MyAccount {
   align-self: flex-start;
   margin: 2rem 5rem;
   width: 100%;
@@ -14,4 +14,17 @@
   margin-bottom: 5rem;
   padding: 2rem 10rem;
   border-bottom: 1px solid #03a7be;
+}
+
+.Info {
+  padding-left: 2rem;
+
+  h2 {
+    font-size: 2.6rem;
+    margin-bottom: 2rem;
+  }
+
+  p {
+    font-size: 1.6rem;
+  }
 }

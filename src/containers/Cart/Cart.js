@@ -70,7 +70,7 @@ const Cart = (props) => {
         / Cart
       </h3>
       <div className={classes.Title}>
-        <h1>Contents of the cart:</h1>
+        <h1>Cart</h1>
 
         <DeleteButton clicked={() => onClearCart(token, userId)}>
           Delete All Items

@@ -1,10 +1,18 @@
 import React, { useRef } from 'react';
 import { CSSTransition } from 'react-transition-group';
 
-import classes from './Modal.module.scss';
+import classes from './ModalSecondary.module.scss';
 
-const Modal = (props) => {
-  const nodeRefModal = useRef(null);
+const ModalSecondary = React.memo((props) => {
+  let modalSecondaryClasses = [classes.ModalSecondary];
+  let backdropClasses = [classes.Backdrop];
+
+  if (props.newStyle === 'list') {
+    backdropClasses.push(classes.ListBackdrop);
+    modalSecondaryClasses.push(classes.List);
+  }
+
+  const nodeRefModalSecondary = useRef(null);
   const nodeRefBackdrop = useRef(null);
 
   return (
@@ -20,7 +28,7 @@ const Modal = (props) => {
         unmountOnExit
       >
         <div
-          className={classes.Backdrop}
+          className={backdropClasses.join(' ')}
           ref={nodeRefBackdrop}
           onClick={props.modalClose}
         />
@@ -29,19 +37,19 @@ const Modal = (props) => {
       <CSSTransition
         in={props.show}
         timeout={500}
-        nodeRef={nodeRefModal}
+        nodeRef={nodeRefModalSecondary}
         classNames={{
-          enterActive: classes.ModalOpen,
-          exitActive: classes.ModalClosed,
+          enterActive: classes.ModalSecondaryOpen,
+          exitActive: classes.ModalSecondaryClosed,
         }}
         unmountOnExit
       >
-        <div className={classes.Modal} ref={nodeRefModal}>
+        <div className={modalSecondaryClasses.join(' ')} ref={nodeRefModalSecondary}>
           {props.children}
         </div>
       </CSSTransition>
     </React.Fragment>
   );
-};
+});
 
-export default Modal;
+export default ModalSecondary;
