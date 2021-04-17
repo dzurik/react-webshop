@@ -6,9 +6,14 @@ export {
   removeFromCart,
   removeFullItemFromCart,
   fetchCart,
-  loadShallowCart,
   loadCart,
   clearCart,
   clearAddedProduct,
 } from './cart';
-export { addWishlist, removeWishlist, fetchWishlist } from './wishlist';
+export {
+  addWishlist,
+  removeWishlist,
+  fetchWishlist,
+  loadWishlist,
+  clearWishlist,
+} from './wishlist';

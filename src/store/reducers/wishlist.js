@@ -3,6 +3,7 @@ import { updateObject } from '../../shared/utility';
 
 const initialState = {
   wishlist: [],
+  wishlistDetailed: [],
   loading: false,
   error: false,
 };
@@ -52,6 +53,37 @@ const fetchWishlistFail = (state, action) => {
   return updateObject(state, { loading: false, error: true });
 };
 
+const loadWishlistStart = (state, action) => {
+  return updateObject(state, { loading: true, wishlistDetailed: [] });
+};
+
+const loadWishlistSuccess = (state, action) => {
+  return updateObject(state, {
+    loading: false,
+    wishlistDetailed: state.wishlistDetailed.concat(action.product),
+  });
+};
+
+const loadWishlistFail = (state, action) => {
+  return updateObject(state, { error: true, loading: false });
+};
+
+const clearWishlistStart = (state, action) => {
+  return updateObject(state, {});
+};
+
+const clearWishlistSuccess = (state, action) => {
+  console.log('clearwishlist');
+  return updateObject(state, {
+    wishlist: [],
+    wishlistDetailed: [],
+  });
+};
+
+const clearWishlistFail = (state, action) => {
+  return updateObject(state, {});
+};
+
 const reducer = (state = initialState, action) => {
   if (action.type === actionTypes.ADD_WISHLIST_SUCCESS) {
     return addWishlistSuccess(state, action);
@@ -79,6 +111,30 @@ const reducer = (state = initialState, action) => {
 
   if (action.type === actionTypes.FETCH_WISHLIST_FAIL) {
     return fetchWishlistFail(state, action);
+  }
+
+  if (action.type === actionTypes.LOAD_WISHLIST_START) {
+    return loadWishlistStart(state, action);
+  }
+
+  if (action.type === actionTypes.LOAD_WISHLIST_SUCCESS) {
+    return loadWishlistSuccess(state, action);
+  }
+
+  if (action.type === actionTypes.LOAD_WISHLIST_FAIL) {
+    return loadWishlistFail(state, action);
+  }
+
+  if (action.type === actionTypes.CLEAR_WISHLIST_START) {
+    return clearWishlistStart(state, action);
+  }
+
+  if (action.type === actionTypes.CLEAR_WISHLIST_SUCCESS) {
+    return clearWishlistSuccess(state, action);
+  }
+
+  if (action.type === actionTypes.CLEAR_WISHLIST_FAIL) {
+    return clearWishlistFail(state, action);
   }
 
   return state;

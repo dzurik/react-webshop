@@ -1,3 +1,4 @@
+import React from 'react';
 import { Link } from 'react-router-dom';
 
 import classes from './ProductAdded.module.scss';
@@ -5,7 +6,7 @@ import Button from '../../../components/UI/Button/Button';
 import ButtonSecondary from '../../../components/UI/ButtonSecondary/ButtonSecondary';
 import { updatePrice } from '../../../shared/utility';
 
-const ProductAdded = (props) => {
+const ProductAdded = React.memo((props) => {
   return (
     <div className={classes.ProductAdded}>
       <h2 className={classes.Title}>The product was successfully added to the cart!</h2>
@@ -21,11 +22,11 @@ const ProductAdded = (props) => {
       <div className={classes.Bottom}>
         <ButtonSecondary clicked={props.modalClose}>Continue shopping</ButtonSecondary>
         <Link to="/cart">
-          <Button>To the shopping cart</Button>
+          <Button clicked={props.modalClose}>To the shopping cart</Button>
         </Link>
       </div>
     </div>
   );
-};
+});
 
 export default ProductAdded;

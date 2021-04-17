@@ -94,3 +94,72 @@ export const fetchWishlist = (userId) => {
       });
   };
 };
+
+const loadWishlistStart = () => {
+  return {
+    type: actionTypes.LOAD_WISHLIST_START,
+  };
+};
+
+const loadWishlistSuccess = (product) => {
+  return {
+    type: actionTypes.LOAD_WISHLIST_SUCCESS,
+    product: product,
+  };
+};
+
+const loadWishlistFail = () => {
+  return {
+    type: actionTypes.LOAD_WISHLIST_FAIL,
+  };
+};
+
+export const loadWishlist = (wishlist) => {
+  return (dispatch) => {
+    dispatch(loadWishlistStart());
+
+    wishlist.forEach((product) => {
+      axios
+        .get(`/products/${product.type}/${product.id}.json`)
+        .then((response) => {
+          dispatch(loadWishlistSuccess(response.data));
+        })
+        .catch((error) => {
+          dispatch(loadWishlistFail());
+        });
+    });
+  };
+};
+
+const clearWishlistStart = () => {
+  return {
+    type: actionTypes.CLEAR_WISHLIST_START,
+  };
+};
+
+const clearWishlistSuccess = () => {
+  return {
+    type: actionTypes.CLEAR_WISHLIST_SUCCESS,
+  };
+};
+
+const clearWishlistFail = () => {
+  return {
+    type: actionTypes.CLEAR_WISHLIST_FAIL,
+  };
+};
+
+export const clearWishlist = (token, userId) => {
+  return (dispatch) => {
+    dispatch(clearWishlistStart());
+
+    if (token) {
+      axios
+        .delete(`/users/${userId}/wishlist.json?`)
+        .then((response) => dispatch(clearWishlistSuccess()))
+        .catch((error) => dispatch(clearWishlistFail));
+    } else {
+      dispatch(clearWishlistSuccess());
+    }
+  };
+};

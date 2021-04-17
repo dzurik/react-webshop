@@ -1,6 +1,6 @@
 import * as actionTypes from './actionTypes';
 import axios from '../../axios-firebase';
-
+import { updateObject } from '../../shared/utility';
 
 // CLEAR ADDEDPRODUCT
 
@@ -18,10 +18,11 @@ const addToCartStart = () => {
   };
 };
 
-const addToCartSuccess = (product) => {
+const addToCartSuccess = (product, cart) => {
   return {
     type: actionTypes.ADD_TO_CART_SUCCESS,
     product: product,
+    cart: cart,
   };
 };
 
@@ -31,7 +32,7 @@ const addToCartFail = () => {
   };
 };
 
-export const addToCart = (userId, productId, productType) => {
+export const addToCart = (userId, productId, productType, addedFromCart) => {
   const transactionId = new Date()
     .toISOString()
     .replaceAll('.', '')
@@ -48,16 +49,64 @@ export const addToCart = (userId, productId, productType) => {
   return (dispatch, getState) => {
     dispatch(addToCartStart());
 
-    if (userId) {
-      axios
-        .put(`/users/${userId}/cart/${transactionId}.json`, product)
-        .then((response) => dispatch(addToCartSuccess(product)))
-        .catch((error) => dispatch(addToCartFail()));
-    } else {
-      dispatch(addToCartSuccess(product));
-    }
     const cart = getState().cart.cart;
-    localStorage.setItem('cart', JSON.stringify(cart));
+    if (userId) {
+      if (cart.length === 0) {
+        axios
+          .put(`/users/${userId}/cart/${transactionId}.json`, product)
+          .then((response) => dispatch(addToCartSuccess(product)))
+          .catch((error) => dispatch(addToCartFail()));
+      } else {
+        let updatedProduct;
+        let cartContain = [];
+        cartContain = cart.map((item) => {
+          if (item.id === productId) {
+            updatedProduct = updateObject(item, { quantity: item.quantity + 1 });
+
+            return 'quantityUpdate';
+          }
+
+          return 'newProduct';
+        });
+
+        if (cartContain.includes('quantityUpdate')) {
+          axios
+            .patch(
+              `/users/${userId}/cart/${updatedProduct.transactionId}.json`,
+              updatedProduct
+            )
+            .then((response) => dispatch(addToCartSuccess(updatedProduct, addedFromCart)))
+            .catch((error) => dispatch(addToCartFail()));
+        } else {
+          axios
+            .put(`/users/${userId}/cart/${transactionId}.json`, product)
+            .then((response) => dispatch(addToCartSuccess(product, addedFromCart)))
+            .catch((error) => dispatch(addToCartFail()));
+        }
+      }
+    } else {
+      if (cart.length === 0) {
+        dispatch(addToCartSuccess(product));
+      } else {
+        let updatedProduct;
+        let cartContain = [];
+        cartContain = cart.map((item) => {
+          if (item.id === productId) {
+            updatedProduct = updateObject(item, { quantity: item.quantity + 1 });
+
+            return 'quantityUpdate';
+          }
+
+          return 'newProduct';
+        });
+
+        if (cartContain.includes('quantityUpdate')) {
+          dispatch(addToCartSuccess(updatedProduct, addedFromCart));
+        } else {
+          dispatch(addToCartSuccess(product, addedFromCart));
+        }
+      }
+    }
   };
 };
 
@@ -69,11 +118,11 @@ const removeFromCartStart = () => {
   };
 };
 
-const removeFromCartSuccess = (transactionId, productId) => {
+const removeFromCartSuccess = (updatedItem, productId) => {
   return {
     type: actionTypes.REMOVE_FROM_CART_SUCCESS,
     productId: productId,
-    transactionId: transactionId,
+    updatedItem: updatedItem,
   };
 };
 
@@ -85,19 +134,21 @@ const removeFromCartFail = () => {
 
 export const removeFromCart = (userId, productId, cart) => {
   return (dispatch, getState) => {
-    let filteredItems = cart.filter((item) => item.id === productId);
+    let filteredItem = cart.find((item) => item.id === productId);
 
     dispatch(removeFromCartStart());
 
+    let updatedItem = updateObject(filteredItem, {
+      quantity: filteredItem.quantity - 1,
+    });
+
     if (userId) {
       axios
-        .delete(`/users/${userId}/cart/${filteredItems[0].transactionId}.json`)
-        .then((response) =>
-          dispatch(removeFromCartSuccess(filteredItems[0].transactionId, productId))
-        )
+        .put(`/users/${userId}/cart/${filteredItem.transactionId}.json`, updatedItem)
+        .then((response) => dispatch(removeFromCartSuccess(updatedItem, productId)))
         .catch((error) => dispatch(removeFromCartFail()));
     } else {
-      dispatch(removeFromCartSuccess(filteredItems[0].transactionId, productId));
+      dispatch(removeFromCartSuccess(updatedItem, productId));
     }
     const updatedCart = getState().cart.cart;
 
@@ -134,18 +185,16 @@ export const removeFullItemFromCartFail = () => {
 export const removeFullItemFromCart = (userId, productId, cart) => {
   return (dispatch, getState) => {
     let updatedCart = cart.filter((item) => item.id !== productId);
-    let deletableItems = cart.filter((item) => item.id === productId);
+    let deletableItem = cart.find((item) => item.id === productId);
     dispatch(removeFullItemFromCartStart());
 
     if (userId) {
-      deletableItems.forEach((item) => {
-        axios
-          .delete(`/users/${userId}/cart/${item.transactionId}.json`)
-          .then((response) =>
-            dispatch(removeFullItemFromCartSuccess(updatedCart, productId))
-          )
-          .catch((error) => dispatch(removeFullItemFromCartFail()));
-      });
+      axios
+        .delete(`/users/${userId}/cart/${deletableItem.transactionId}.json`)
+        .then((response) =>
+          dispatch(removeFullItemFromCartSuccess(updatedCart, productId))
+        )
+        .catch((error) => dispatch(removeFullItemFromCartFail()));
     } else {
       dispatch(removeFullItemFromCartSuccess(updatedCart, productId));
     }
@@ -194,62 +243,47 @@ export const clearCart = (token, userId) => {
   };
 };
 
-// LOAD SHALLOW CART
+// LOAD CART
 
-const loadShallowCartStart = () => {
+const loadCartStart = () => {
   return {
-    type: actionTypes.LOAD_SHALLOW_CART_START,
+    type: actionTypes.LOAD_CART_START,
   };
 };
 
-const loadShallowCartSuccess = (item, transactionId) => {
+const loadCartSuccess = (product, quantity) => {
   return {
-    type: actionTypes.LOAD_SHALLOW_CART_SUCCESS,
-    item: item,
-    transactionId: transactionId,
+    type: actionTypes.LOAD_CART_SUCCESS,
+    product: product,
+    quantity: quantity,
   };
 };
 
-const loadShallowCartFail = () => {
+const loadCartFail = () => {
   return {
-    type: actionTypes.LOAD_SHALLOW_CART_FAIL,
+    type: actionTypes.LOAD_CART_FAIL,
   };
 };
 
-export const loadShallowCart = (cart) => {
+export const loadCart = (cart) => {
   return (dispatch) => {
-    dispatch(loadShallowCartStart());
+    dispatch(loadCartStart());
 
     const localStorageCart = JSON.parse(localStorage.getItem('cart'));
     if (!localStorageCart) dispatch(clearCart());
 
-    if (localStorageCart || cart.length === localStorageCart.length) {
+    if (localStorageCart || (cart && cart.length === localStorageCart.length)) {
       cart.forEach((item) => {
         axios
           .get(`products/${item.type}/${item.id}.json`)
           .then((response) => {
-            dispatch(loadShallowCartSuccess(response.data, item.transactionId));
+            dispatch(loadCartSuccess(response.data, item.quantity));
           })
-          .catch((error) => dispatch(loadShallowCartFail()));
+          .catch((error) => dispatch(loadCartFail()));
       });
     } else {
-      dispatch(loadShallowCartSuccess());
+      dispatch(loadCartSuccess());
     }
-  };
-};
-
-// LOAD CART
-
-const loadCartSuccess = (cart) => {
-  return {
-    type: actionTypes.LOAD_CART_SUCCESS,
-    cart: cart,
-  };
-};
-
-export const loadCart = (shallowCart) => {
-  return (dispatch) => {
-    dispatch(loadCartSuccess(shallowCart));
   };
 };
 
@@ -292,14 +326,16 @@ export const fetchCart = (token) => {
 
             Object.keys(response.data).forEach((product) => {
               const updatedProduct = {
-                type: response.data[product].productType,
-                id: response.data[product].productId,
+                type: response.data[product].type,
+                id: response.data[product].id,
                 transactionId: response.data[product].transactionId,
-                quantity: 1,
+                quantity: response.data[product].quantity,
               };
+
               updatedCart.push(updatedProduct);
             });
             dispatch(fetchCartSuccess(updatedCart));
+
             localStorage.setItem('cart', JSON.stringify(updatedCart));
           }
         })
@@ -313,13 +349,15 @@ export const fetchCart = (token) => {
 
       updatedCart = cart.map((product) => {
         let updatedProduct = {
-          productId: product.id,
-          productType: product.type,
+          id: product.id,
+          quantity: product.quantity,
           transactionId: product.transactionId,
+          type: product.type,
         };
 
         return updatedProduct;
       });
+
       setTimeout(() => {
         updatedCart.forEach((product) => {
           axios.put(`/users/${userId}/cart/${product.transactionId}.json`, product);
@@ -328,4 +366,3 @@ export const fetchCart = (token) => {
     }
   };
 };
-

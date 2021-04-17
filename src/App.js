@@ -51,8 +51,8 @@ function App() {
     return state.cart.cart;
   });
 
-  const shallowCart = useSelector((state) => {
-    return state.cart.shallowCart;
+  const fullDetailedCart = useSelector((state) => {
+    return state.cart.fullDetailedCart;
   });
 
   const token = useSelector((state) => {
@@ -61,6 +61,10 @@ function App() {
 
   const userId = useSelector((state) => {
     return state.auth.userId;
+  });
+
+  const loadCart = useSelector((state) => {
+    return state.cart.loadCart;
   });
 
   const tokenRef = useRef(token);
@@ -79,15 +83,7 @@ function App() {
     [dispatch]
   );
 
-  const onLoadShallowCart = useCallback(
-    (cart, shallowCart) => dispatch(actions.loadShallowCart(cart, shallowCart)),
-    [dispatch]
-  );
-
-  const onLoadCart = useCallback(
-    (cart, shallowCart) => dispatch(actions.loadCart(cart, shallowCart)),
-    [dispatch]
-  );
+  const onLoadCart = useCallback((cart) => dispatch(actions.loadCart(cart)), [dispatch]);
 
   useEffect(() => {
     onCheckAuthStatus();
@@ -103,22 +99,21 @@ function App() {
     }
   }, [onFetchWishlist, token, userId]);
 
-  const shallowRef = useRef(shallowCart);
+  let cartRef = useRef(null);
 
   useEffect(() => {
     if (
-      cart.length > 0 &&
-      cart.length > shallowRef.current.length &&
-      shallowCart.length === shallowRef.current.length
+      loadCart ||
+      (cart.length > 0 &&
+        fullDetailedCart.length === 0 &&
+        cart.length !== cartRef.current.length)
     ) {
-      onLoadShallowCart(cart);
+      console.log('loadcart');
+      onLoadCart(cart);
     }
-    shallowRef.current = shallowCart;
 
-    if (cart.length > 0 && cart.length === shallowCart.length) {
-      onLoadCart(shallowCart);
-    }
-  }, [onLoadShallowCart, onLoadCart, cart, shallowCart]);
+    cartRef.current = cart;
+  }, [onLoadCart, loadCart, cart, fullDetailedCart]);
 
   let routes = (
     <Switch>

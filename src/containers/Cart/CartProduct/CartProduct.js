@@ -16,8 +16,8 @@ const CartProduct = (props) => {
 
   const dispatch = useDispatch();
 
-  const onAddToCart = (userId, productId, productType) =>
-    dispatch(actions.addToCart(userId, productId, productType));
+  const onAddToCart = (userId, productId, productType, cart) =>
+    dispatch(actions.addToCart(userId, productId, productType, cart));
 
   const onRemoveFromCart = (userId, productId, cart) =>
     dispatch(actions.removeFromCart(userId, productId, cart));
@@ -50,7 +50,7 @@ const CartProduct = (props) => {
         <span>{props.quantity}</span>
         <div
           className={classes.Plus}
-          onClick={() => onAddToCart(userId, props.id, props.type)}
+          onClick={() => onAddToCart(userId, props.id, props.type, true)}
         >
           &#x2b;
         </div>

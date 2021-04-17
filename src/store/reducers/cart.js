@@ -3,10 +3,11 @@ import { updateObject } from '../../shared/utility';
 
 const initialState = {
   cart: [],
-  shallowCart: [],
-  fullDetailedCart: null,
+  loadCart: null,
+  fullDetailedCart: [],
   loading: false,
   error: false,
+  errorMessage: null,
   addedProduct: null,
 };
 
@@ -25,14 +26,44 @@ const addToCartStart = (state, action) => {
 };
 
 const addToCartSuccess = (state, action) => {
+  let updatedCart = state.cart.slice();
+  let updateProduct;
+
+  if (updatedCart.length) {
+    updatedCart = updatedCart.map((product) => {
+      if (product.transactionId !== action.product.transactionId) {
+        return product;
+      }
+
+      updateProduct = true;
+
+      return action.product;
+    });
+  }
+
+  if (updateProduct) {
+    localStorage.setItem('cart', JSON.stringify(updatedCart));
+    return updateObject(state, {
+      cart: updatedCart,
+      addedProduct: action.cart ? null : action.product,
+      loadCart: true,
+    });
+  }
+
+  localStorage.setItem('cart', JSON.stringify(state.cart.concat(action.product)));
+
   return updateObject(state, {
-    addedProduct: action.product,
     cart: state.cart.concat(action.product),
+    addedProduct: action.cart ? null : action.product,
+    loadCart: true,
   });
 };
 
 const addToCartFail = (state, action) => {
-  return updateObject(state, {});
+  return updateObject(state, {
+    error: true,
+    errorMessage: 'Failed to add an item to cart',
+  });
 };
 
 // REMOVE FROM CART
@@ -42,19 +73,21 @@ const removeFromCartStart = (state, action) => {
 };
 
 const removeFromCartSuccess = (state, action) => {
-  let updatedCart = [];
-
-  state.cart.forEach((item) => {
-    if (item.transactionId !== action.transactionId) {
-      updatedCart.push(item);
-    }
-  });
+  let updatedCart = state.cart.slice();
 
   if (updatedCart.length === 0) {
     return updateObject(state, {});
   }
 
-  return updateObject(state, { cart: updatedCart });
+  updatedCart = updatedCart.map((item) => {
+    if (item.transactionId !== action.updatedItem.transactionId) {
+      return item;
+    }
+
+    return action.updatedItem;
+  });
+
+  return updateObject(state, { cart: updatedCart, loadCart: true });
 };
 
 const removeFromCartFail = (state, action) => {
@@ -86,60 +119,20 @@ const removeFullItemFromCartFail = (state, action) => {
   return updateObject(state, { error: true });
 };
 
-// LOAD SHALLOW CART
-
-const loadShallowCartStart = (state, action) => {
-  return updateObject(state, { loading: true, error: false });
-};
-
-const loadShallowCartSuccess = (state, action) => {
-  if (!action.item)
-    return updateObject(state, {
-      loading: false,
-    });
-  const updatedItem = updateObject(action.item, { transactionId: action.transactionId });
-
-  return updateObject(state, {
-    loading: false,
-    shallowCart: state.shallowCart.concat(updatedItem),
-  });
-};
-
-const loadShallowCartFail = (state, action) => {
-  return updateObject(state, { error: true });
+const loadCartStart = (state, action) => {
+  return updateObject(state, { fullDetailedCart: [], loadCart: false });
 };
 
 const loadCartSuccess = (state, action) => {
-  let updatedCart = [];
-
-  action.cart.forEach((item) => {
-    let newProduct = true;
-    let updatedItem = updateObject(item, { quantity: 1 });
-    if (!updatedCart.length) {
-      updatedCart.push(updatedItem);
-    } else {
-      let newCart = updatedCart.map((product) => {
-        if (product.id !== item.id) {
-          return product;
-        } else {
-          newProduct = false;
-          return updateObject(product, { quantity: product.quantity + 1 });
-        }
-      });
-
-      if (newProduct) {
-        newCart.push(updatedItem);
-      }
-
-      updatedCart = newCart;
-    }
-  });
+  let updatedProduct = updateObject(action.product, { quantity: action.quantity });
 
   return updateObject(state, {
-    loading: false,
-    fullDetailedCart: updatedCart,
-    shallowCart: [],
+    fullDetailedCart: state.fullDetailedCart.concat(updatedProduct),
   });
+};
+
+const loadCartFail = (state, action) => {
+  return updateObject(state, {});
 };
 
 // CLEAR CART
@@ -167,7 +160,7 @@ const fetchCartStart = (state, action) => {
 };
 
 const fetchCartSuccess = (state, action) => {
-  return updateObject(state, { cart: state.cart.concat(action.cart) });
+  return updateObject(state, { cart: state.cart.concat(action.cart), loadCart: true });
 };
 
 const fetchCartFail = (state, action) => {
@@ -223,20 +216,16 @@ const reducer = (state = initialState, action) => {
     return fetchCartFail(state, action);
   }
 
-  if (action.type === actionTypes.LOAD_SHALLOW_CART_START) {
-    return loadShallowCartStart(state, action);
-  }
-
-  if (action.type === actionTypes.LOAD_SHALLOW_CART_SUCCESS) {
-    return loadShallowCartSuccess(state, action);
-  }
-
-  if (action.type === actionTypes.LOAD_SHALLOW_CART_FAIL) {
-    return loadShallowCartFail(state, action);
+  if (action.type === actionTypes.LOAD_CART_START) {
+    return loadCartStart(state, action);
   }
 
   if (action.type === actionTypes.LOAD_CART_SUCCESS) {
     return loadCartSuccess(state, action);
+  }
+
+  if (action.type === actionTypes.LOAD_CART_FAIL) {
+    return loadCartFail(state, action);
   }
 
   if (action.type === actionTypes.CLEAR_CART_START) {

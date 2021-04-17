@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import classes from './Product.module.scss';
 import AddButton from '../../../../components/UI/AddButton/AddButton';
@@ -17,7 +17,6 @@ const Product = React.memo((props) => {
   const [showAdded, setShowAdded] = useState(false);
   const [likeWithoutLogin, setLikeWithoutLogin] = useState(false);
   const [like, setLike] = useState(false);
-  const showAddedRef = useRef(null);
 
   const token = useSelector((state) => {
     return state.auth.token;
@@ -90,16 +89,12 @@ const Product = React.memo((props) => {
   }, [wishlist, props.id]);
 
   useEffect(() => {
-    if (addedProduct && showAdded !== showAddedRef.current) {
+    if (addedProduct && props.id === addedProduct.id) {
       setShowAdded(true);
     } else {
       setShowAdded(false);
     }
-
-    if (addedProduct) {
-      showAddedRef.current = showAdded;
-    }
-  }, [addedProduct, showAdded]);
+  }, [addedProduct, showAdded, props.id]);
 
   return (
     <React.Fragment>
