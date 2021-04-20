@@ -272,7 +272,7 @@ export const loadCart = (cart) => {
     const localStorageCart = JSON.parse(localStorage.getItem('cart'));
     if (!localStorageCart) dispatch(clearCart());
 
-    if (localStorageCart || (cart && cart.length === localStorageCart.length)) {
+    if (localStorageCart || (cart.length && cart.length === localStorageCart.length)) {
       cart.forEach((item) => {
         axios
           .get(`products/${item.type}/${item.id}.json`)

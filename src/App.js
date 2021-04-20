@@ -87,11 +87,14 @@ function App() {
 
   useEffect(() => {
     onCheckAuthStatus();
+  }, [onCheckAuthStatus]);
+
+  useEffect(() => {
     if (tokenRef.current === null || token !== tokenRef.current) {
       onFetchCart(token);
     }
     tokenRef.current = token;
-  }, [onCheckAuthStatus, onFetchCart, token]);
+  }, [onFetchCart, token]);
 
   useEffect(() => {
     if (token) {

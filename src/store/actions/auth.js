@@ -1,5 +1,6 @@
 import axios from 'axios';
 import axiosFirebase from '../../axios-firebase';
+import { updateObject } from '../../shared/utility';
 import * as actionTypes from './actionTypes';
 
 const authStart = (signUp) => {
@@ -36,6 +37,20 @@ export const authLogout = () => {
   };
 };
 
+const loadUserDataSuccess = (data, email) => {
+  return {
+    type: actionTypes.LOAD_USER_DATA_SUCCESS,
+    data: data,
+    email: email,
+  };
+};
+
+const loadUserDataFail = () => {
+  return {
+    type: actionTypes.LOAD_USER_DATA_FAIL,
+  };
+};
+
 export const auth = (email, password, signUp) => {
   const config = {
     email: email,
@@ -64,15 +79,16 @@ export const auth = (email, password, signUp) => {
         localStorage.setItem('token', response.data.idToken);
         localStorage.setItem('localId', response.data.localId);
 
-        // axios.get(`users/${item.localId}.json`).then();
-
         dispatch(authSuccess(signUp, response.data.idToken, response.data.localId));
         if (signUp) {
-          axiosFirebase.put(`users/${response.data.localId}.json`, {
+          axiosFirebase.put(`users/${response.data.localId}/personal.json`, {
             userName: email.split('@')[0],
             userId: response.data.localId,
+            email: email,
           });
         }
+
+        loadUserData(dispatch, response.data.localId, email);
       })
       .catch((error) => {
         dispatch(authFail(signUp, error.response.data.error));
@@ -92,9 +108,62 @@ export const checkAuthStatus = () => {
       if (expireDate > now) {
         const localId = localStorage.getItem('localId');
         dispatch(authSuccess(true, token, localId));
+        loadUserData(dispatch, localId);
       } else {
         dispatch(authLogout());
       }
     }
+  };
+};
+
+const loadUserData = (dispatch, localId, email) => {
+  axiosFirebase
+    .get(`users/${localId}/personal.json`)
+    .then((response) => {
+      dispatch(loadUserDataSuccess(response.data, email));
+    })
+    .catch((error) => {
+      dispatch(loadUserDataFail());
+    });
+};
+
+const updatePersonalDataStart = () => {
+  return {
+    type: actionTypes.UPDATE_PERSONAL_DATA_START,
+  };
+};
+
+const updatePersonalDataSuccess = (formData, detailType) => {
+  return {
+    type: actionTypes.UPDATE_PERSONAL_DATA_SUCCESS,
+    formData: formData,
+    detailType: detailType,
+  };
+};
+
+const updatePersonalDataFail = () => {
+  return {
+    type: actionTypes.UPDATE_PERSONAL_DATA_FAIL,
+  };
+};
+
+export const updatePersonalData = (userId, formData, type) => {
+  return (dispatch) => {
+    dispatch(updatePersonalDataStart());
+
+    let updatedFormData = {};
+
+    Object.keys(formData).forEach((key) => {
+      updatedFormData = updateObject(updatedFormData, { [key]: formData[key].value });
+    });
+
+    axiosFirebase
+      .patch(`users/${userId}/personal.json`, updatedFormData)
+      .then((response) => {
+        dispatch(updatePersonalDataSuccess(updatedFormData, type));
+      })
+      .catch((error) => {
+        dispatch(updatePersonalDataFail());
+      });
   };
 };

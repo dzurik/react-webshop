@@ -1,7 +1,8 @@
 .Input {
   margin-bottom: 1rem;
+
   label {
-    width: 20rem;
+    width: 15rem;
   }
 
   input {
@@ -34,6 +35,10 @@
   .Error {
     border: 2px solid #ff0000;
   }
+}
+
+.Row {
+  display: flex;
 }
 
 .Column {

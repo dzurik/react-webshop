@@ -126,6 +126,10 @@ const loadCartStart = (state, action) => {
 const loadCartSuccess = (state, action) => {
   let updatedProduct = updateObject(action.product, { quantity: action.quantity });
 
+  if (!action.product) {
+    return updateObject(state, {});
+  }
+
   return updateObject(state, {
     fullDetailedCart: state.fullDetailedCart.concat(updatedProduct),
   });

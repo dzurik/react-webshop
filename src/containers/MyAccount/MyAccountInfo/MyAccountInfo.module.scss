@@ -15,3 +15,53 @@
   padding: 2rem 10rem;
   border-bottom: 1px solid #03a7be;
 }
+
+.Box {
+  position: relative;
+  margin-left: 3rem;
+  margin-bottom: 3rem;
+  padding: 1.5rem;
+  border-radius: 1.5rem;
+  border: 1px solid #03a7be;
+  width: 50%;
+
+  h2 {
+    font-weight: 700;
+    font-size: 2rem;
+  }
+
+  ul {
+    font-size: 1.6rem;
+    list-style: none;
+    margin-top: 1rem;
+    margin-left: 1.5rem;
+
+    li {
+      margin-top: 0.5rem;
+    }
+  }
+}
+
+.Change {
+  position: absolute;
+  font-size: 1.4rem;
+  top: 1rem;
+  right: 1rem;
+  cursor: pointer;
+  color: #03a7be;
+  transition: all 0.2s;
+
+  &:hover {
+    color: #000;
+  }
+}
+
+.Form {
+  font-size: 1.8rem;
+
+  label {
+    cursor: pointer;
+    width: 20rem;
+    margin-right: 3rem;
+  }
+}

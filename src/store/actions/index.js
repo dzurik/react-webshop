@@ -1,6 +1,6 @@
 export { fetchProducts, fetchSingleProduct } from './products';
 export { addProduct, addNewProduct } from './admin';
-export { auth, checkAuthStatus, authLogout } from './auth';
+export { auth, checkAuthStatus, authLogout, updatePersonalData } from './auth';
 export {
   addToCart,
   removeFromCart,

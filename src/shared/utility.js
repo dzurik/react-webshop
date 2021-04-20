@@ -30,6 +30,12 @@ export const checkValidity = (value, rules) => {
       errorMessage = `This field must be at least ${rules.minLength} characters long!`;
   }
 
+  if (rules.maxLength && isValid) {
+    isValid = value.length <= rules.maxLength;
+    if (!isValid)
+      errorMessage = `This field must be shorter than ${rules.maxLength + 1} characters!`;
+  }
+
   if (rules.isEmail && isValid) {
     const pattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
     isValid = pattern.test(value) && isValid;

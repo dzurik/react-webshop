@@ -2,23 +2,28 @@ import React from 'react';
 import classes from './Input.module.scss';
 
 const Input = (props) => {
+  let selectClasses = [classes.Input];
   let inputClasses = [classes.Input];
 
   if (!props.valid && props.touched) {
-    inputClasses.push(classes.Error);
+    selectClasses.push(classes.Error);
   }
 
   if (props.flexStyle === 'column') {
-    inputClasses.push(classes.Column);
+    selectClasses.push(classes.Column);
+  }
+
+  if (props.flexStyle === 'row') {
+    inputClasses.push(classes.Row);
   }
 
   return (
-    <div className={classes.Input}>
+    <div className={inputClasses.join(' ')}>
       {props.type === 'select' ? (
         <React.Fragment>
           <label htmlFor={props.name}>{props.name}</label>
           <select
-            className={inputClasses.join(' ')}
+            className={selectClasses.join(' ')}
             id={props.name}
             onChange={props.changed}
             defaultValue="default"
@@ -39,7 +44,7 @@ const Input = (props) => {
         <React.Fragment>
           <label htmlFor={props.name}>{props.name}</label>
           <input
-            className={inputClasses.join(' ')}
+            className={selectClasses.join(' ')}
             id={props.name}
             type={props.type}
             placeholder={props.placeholder}

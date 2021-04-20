@@ -11,7 +11,11 @@ const MyAccount = (props) => {
   });
 
   const userName = useSelector((state) => {
-    return state.auth.userName;
+    return state.auth.userDetails.userName;
+  });
+
+  const firstName = useSelector((state) => {
+    return state.auth.userDetails.firstName;
   });
 
   let authRedirect = null;
@@ -25,8 +29,12 @@ const MyAccount = (props) => {
       <h1 className={classes.Title}> &lsaquo; My account &rsaquo; </h1>
       <MyAccountMenu />
       <div className={classes.Info}>
-        <h2>My account</h2>
-        <p>You are currently logged in under the user name {userName}.</p>
+        <h2>
+          Welcome <span>{firstName ? firstName : userName}!</span>
+        </h2>
+        <p>
+          You are currently logged in under the username <span>{userName}</span>.
+        </p>
       </div>
     </div>
   );
